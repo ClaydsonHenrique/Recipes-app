@@ -1,8 +1,8 @@
 import React from 'react';
-import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryHistory } from 'history';
 import App from '../App';
-import Login from '../pages/Login';
 import { renderWithRouterAndRedux } from '../helpers/renderwith';
 
 describe('test login page features', () => {
@@ -20,8 +20,8 @@ describe('test login page features', () => {
     screen.getByTestId('password-input');
   });
 
-  test('Checks the disabled/enabled button dynamic', async () => {
-    const { history } = renderWithRouterAndRedux(<Login />);
+  test('Checks the disabled/enabled button dynamic', () => {
+    const { history } = renderWithRouterAndRedux(<App />);
     const button = screen.getByRole('button', { name: /Enter/i,
     });
 
@@ -33,16 +33,14 @@ describe('test login page features', () => {
     const emailID = screen.getByTestId('email-input');
     const passwordID = screen.getByTestId('password-input');
 
-    fireEvent.change(emailID, inputEmail);
-    fireEvent.change(passwordID, inputPassword);
+    userEvent.type(emailID, inputEmail);
+    userEvent.type(passwordID, inputPassword);
 
-    await waitFor(() => {
-      expect(button).toBeEnabled();
-    });
+    expect(button).toBeEnabled();
 
-    /* userEvent.click(button);
+    userEvent.click(button);
     const { pathname } = history.location;
 
-    expect(pathname).tobe('/meals'); */
+    expect(pathname).toBe('/meals');
   });
 });
