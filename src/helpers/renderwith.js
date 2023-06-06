@@ -1,9 +1,10 @@
 import React from 'react';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
+import { render } from '@testing-library/react';
+import thunk from 'redux-thunk';
 import { Router } from 'react-router-dom';
 import { applyMiddleware, createStore } from 'redux';
-import { render } from '@testing-library/react';
 import rootReducer from '../redux/reducers';
 
 function withRouter(component, history) {
@@ -14,7 +15,7 @@ function withRouter(component, history) {
   );
 }
 
-function withRedux(component, store) {
+export function withRedux(component, store) {
   return (
     <Provider store={ store }>
       { component }

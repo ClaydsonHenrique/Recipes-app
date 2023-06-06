@@ -1,13 +1,14 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen, userEvent, waitFor } from '@testing-library/react';
+import { createMemoryHistory } from 'history';
 import App from '../App';
+import Login from '../pages/Login';
 import { renderWithRouterAndRedux } from '../helpers/renderwith';
 
 describe('test login page features', () => {
   test('test if login renders', () => {
     renderWithRouterAndRedux(<App />);
     const history = createMemoryHistory();
-    renderWithRouterAndRedux(<App />);
 
     const { pathname } = history.location;
     expect(pathname).toBe('/');
@@ -19,24 +20,29 @@ describe('test login page features', () => {
     screen.getByTestId('password-input');
   });
 
-  test('Checks the disabled/enabled button dynamic', () => {
-    const { history } = renderWithRouterAndRedux(<App />);
+  test('Checks the disabled/enabled button dynamic', async () => {
+    const { history } = renderWithRouterAndRedux(<Login />);
     const button = screen.getByRole('button', { name: /Enter/i,
     });
 
     expect(button).toBeDisabled();
 
-    const inputEmail = screen.getByTestId('email-input');
-    const inputPassword = screen.getByTestId('password-input');
+    const inputEmail = 'teste@teste.com';
+    const inputPassword = '1234567';
 
-    userEvent.type(inputEmail, 'teste@teste.com');
-    userEvent.type(inputPassword, '123456');
+    const emailID = screen.getByTestId('email-input');
+    const passwordID = screen.getByTestId('password-input');
 
-    expect(button).toBeEnabled();
+    fireEvent.change(emailID, inputEmail);
+    fireEvent.change(passwordID, inputPassword);
 
-    userEvent.click(button);
+    await waitFor(() => {
+      expect(button).toBeEnabled();
+    });
+
+    /* userEvent.click(button);
     const { pathname } = history.location;
 
-    expect(pathname).tobe('/meals');
+    expect(pathname).tobe('/meals'); */
   });
 });

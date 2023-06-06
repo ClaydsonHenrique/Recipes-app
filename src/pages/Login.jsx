@@ -51,7 +51,7 @@ class Login extends Component {
     return (
       <div>
         <form>
-          <label htmlFor="email">
+          <label htmlFor="email" placeholder="email">
             Email
           </label>
           <input
@@ -61,7 +61,7 @@ class Login extends Component {
             value={ email }
             onChange={ this.handleChange }
           />
-          <label htmlFor="password">
+          <label htmlFor="password" placeholder="password">
             Password
           </label>
           <input
