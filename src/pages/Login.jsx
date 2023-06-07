@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import submitEmail from '../redux/actions';
-import Footer from '../components/Footer';
 import './login.css';
 
 class Login extends Component {
@@ -82,7 +81,6 @@ class Login extends Component {
             Enter
           </button>
         </form>
-        <Footer />
       </div>
     );
   }

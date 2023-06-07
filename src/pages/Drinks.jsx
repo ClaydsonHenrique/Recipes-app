@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Footer from '../components/Footer';
 
-class Receitas extends Component {
+class Drinks extends Component {
   render() {
     return (
       <div>
-        <div>Receitas</div>
+        <div>Drinks</div>
         <Footer />
       </div>
     );
   }
 }
 
-export default connect()(Receitas);
+export default connect()(Drinks);
