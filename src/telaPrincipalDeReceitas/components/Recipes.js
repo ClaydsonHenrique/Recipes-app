@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
 
 const MAX_RECIPES = 12;
@@ -8,6 +8,7 @@ const MAX_CATEGORIES = 5;
 function Recipes() {
   const { meals, drinks, mealCategories, drinkCategories } = useContext(RecipesContext);
   const location = useLocation();
+  const history = useHistory();
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
 
@@ -44,6 +45,11 @@ function Recipes() {
     setSelectedCategory('');
   };
 
+  const handleRecipeClick = (recipeId) => {
+    const recipeType = location.pathname === '/meals' ? 'meals' : 'drinks';
+    history.push(`/${recipeType}/${recipeId}`);
+  };
+
   return (
     <div>
       <h2>{location.pathname === '/meals' ? 'Meals' : 'Drinks'}</h2>
@@ -78,14 +84,29 @@ function Recipes() {
       <ul>
         {filteredRecipes.slice(0, MAX_RECIPES).map((recipe, index) => (
           <li key={ index } data-testid={ `${index}-recipe-card` }>
-            <img
-              src={ recipe.strMealThumb || recipe.strDrinkThumb }
-              alt={ recipe.strMeal || recipe.strDrink }
-              data-testid={ `${index}-card-img` }
-            />
-            <span data-testid={ `${index}-card-name` }>
-              {recipe.strMeal || recipe.strDrink}
-            </span>
+            <Link
+              to={
+                location.pathname === '/meals'
+                  ? `/meals/${recipe.idMeal}`
+                  : `/drinks/${recipe.idDrink}`
+              }
+              onClick={ () => handleRecipeClick(recipe.idMeal || recipe.idDrink) }
+              onKeyPress={ (event) => {
+                if (event.key === 'Enter') {
+                  handleRecipeClick(recipe.idMeal || recipe.idDrink);
+                }
+              } }
+              tabIndex={ 0 }
+            >
+              <img
+                src={ recipe.strMealThumb || recipe.strDrinkThumb }
+                alt={ recipe.strMeal || recipe.strDrink }
+                data-testid={ `${index}-card-img` }
+              />
+              <span data-testid={ `${index}-card-name` }>
+                {recipe.strMeal || recipe.strDrink}
+              </span>
+            </Link>
           </li>
         ))}
       </ul>
