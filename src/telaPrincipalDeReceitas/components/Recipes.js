@@ -37,7 +37,7 @@ function Recipes() {
   }, [selectedCategory, recipes, location.pathname]);
 
   const handleCategoryFilter = (category) => {
-    setSelectedCategory(category);
+    setSelectedCategory((prevCategory) => (prevCategory === category ? '' : category));
   };
 
   const handleClearFilter = () => {
