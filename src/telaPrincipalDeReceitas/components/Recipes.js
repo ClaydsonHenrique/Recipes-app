@@ -1,13 +1,48 @@
-import React, { useContext } from 'react';
-import { useLocation } from 'react-router-dom/cjs/react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import RecipesContext from '../context/RecipesContext';
+
+const MAX_RECIPES = 12;
+const MAX_CATEGORIES = 5;
 
 function Recipes() {
   const { meals, drinks, mealCategories, drinkCategories } = useContext(RecipesContext);
   const location = useLocation();
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   const recipes = location.pathname === '/meals' ? meals : drinks;
   const categories = location.pathname === '/meals' ? mealCategories : drinkCategories;
+
+  useEffect(() => {
+    if (selectedCategory) {
+      const filterEndpoint = location.pathname === '/meals'
+        ? `https://www.themealdb.com/api/json/v1/1/filter.php?c=${selectedCategory}`
+        : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${selectedCategory}`;
+
+      const fetchFilteredRecipes = async () => {
+        try {
+          const response = await fetch(filterEndpoint);
+          const data = await response.json();
+          setFilteredRecipes(data.meals || data.drinks);
+        } catch (error) {
+          console.error('Error fetching filtered recipes:', error);
+        }
+      };
+
+      fetchFilteredRecipes();
+    } else {
+      setFilteredRecipes(recipes);
+    }
+  }, [selectedCategory, recipes, location.pathname]);
+
+  const handleCategoryFilter = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleClearFilter = () => {
+    setSelectedCategory('');
+  };
 
   return (
     <div>
@@ -16,9 +51,22 @@ function Recipes() {
       <div>
         <h3>Categories</h3>
         <ul>
-          {categories.map((category, index) => (
+          <li>
+            <button
+              type="button"
+              data-testid="All-category-filter"
+              onClick={ handleClearFilter }
+            >
+              All
+            </button>
+          </li>
+          {categories.slice(0, MAX_CATEGORIES).map((category, index) => (
             <li key={ index }>
-              <button data-testid={ `${category.strCategory}-category-filter` }>
+              <button
+                type="button"
+                data-testid={ `${category.strCategory}-category-filter` }
+                onClick={ () => handleCategoryFilter(category.strCategory) }
+              >
                 {category.strCategory}
               </button>
             </li>
@@ -28,7 +76,7 @@ function Recipes() {
 
       <h3>Recipes</h3>
       <ul>
-        {recipes.map((recipe, index) => (
+        {filteredRecipes.slice(0, MAX_RECIPES).map((recipe, index) => (
           <li key={ index } data-testid={ `${index}-recipe-card` }>
             <img
               src={ recipe.strMealThumb || recipe.strDrinkThumb }
