@@ -1,19 +1,18 @@
 import React from 'react';
-import './App.css';
-import rockGlass from './images/rockGlass.svg';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Route, Switch } from 'react-router-dom';
+import Header from './componentes/Header';
 
 function App() {
   return (
     <div className="meals">
-      <span className="logo">TRYBE</span>
-      <object
-        className="rocksGlass"
-        type="image/svg+xml"
-        data={ rockGlass }
-      >
-        Glass
-      </object>
+      <Switch>
+        <Route exact component={ Header } path="/meals" />
+        <Route exact component={ Header } path="/drinks" />
+        <Route exact component={ Header } path="/profile" />
+        <Route exact component={ Header } path="/done-recipes" />
+        <Route exact component={ Header } path="/favorite-recipes" />
+      </Switch>
+
     </div>
   );
 }
