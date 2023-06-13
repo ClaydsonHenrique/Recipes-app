@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import drink from '../images/drinkIcon.svg';
 import meal from '../images/mealIcon.svg';
+import drink from '../images/drinkIcon.svg';
 import './footer.css';
 
 class Footer extends Component {
