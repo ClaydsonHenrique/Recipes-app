@@ -5,8 +5,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import rockGlass from './images/rockGlass.svg';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
-import Receitas from './pages/Receitas';
-import Drinks from './pages/Drinks';
 import RecipesProvider from './telaPrincipalDeReceitas/context/RecipesProvider';
 import Recipes from './telaPrincipalDeReceitas/components/Recipes';
 
