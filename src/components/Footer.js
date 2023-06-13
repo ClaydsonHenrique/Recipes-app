@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import drink from '../images/drinkIcon.svg';
 import meal from '../images/mealIcon.svg';
@@ -23,28 +23,32 @@ class Footer extends Component {
         data-testid="footer"
       >
         <div className="footer_images-container">
-          <a
-            className="footer__drink-img"
-            href="/drinks"
-            onClick={ this.handleClickDrinks }
-          >
-            <img
-              src={ drink }
-              alt="drink"
-              data-testid="drinks-bottom-btn"
-            />
-          </a>
-          <a
-            className="footer__meal-img"
-            href="/meals"
-            onClick={ this.handleClickMeals }
-          >
-            <img
-              src={ meal }
-              alt="meal"
-              data-testid="meals-bottom-btn"
-            />
-          </a>
+          <span>
+            <a
+              className="footer__drink-img"
+              href="/drinks"
+              onClick={ this.handleClickDrinks }
+            >
+              <img
+                data-testid="drinks-bottom-btn"
+                src={ drink }
+                alt="drink"
+              />
+            </a>
+          </span>
+          <span>
+            <a
+              className="footer__meal-img"
+              href="/meals"
+              onClick={ this.handleClickMeals }
+            >
+              <img
+                src={ meal }
+                alt="meal"
+                data-testid="meals-bottom-btn"
+              />
+            </a>
+          </span>
         </div>
       </div>
     );
