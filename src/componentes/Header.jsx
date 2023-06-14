@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import imagem from '../images/profileIcon.svg';
 import imagem2 from '../images/searchIcon.svg';
@@ -11,6 +12,7 @@ class Header extends Component {
     this.state = {
       count: 0,
       inputs: false,
+      receitasfilter: [],
     };
   }
 
@@ -24,7 +26,7 @@ class Header extends Component {
   };
 
   rendeObjst = () => {
-    const { inputs } = this.state;
+    const { inputs, receitasfilter } = this.state;
     const { history } = this.props;
     const { location } = history;
     const { pathname } = location;
@@ -44,7 +46,11 @@ class Header extends Component {
           >
             <img src={ imagem2 } alt="" data-testid="search-top-btn" />
           </button>
-          {inputs ? <SearchBar pathname={ pathname } /> : ''}
+          {inputs ? <SearchBar
+            pathname={ pathname }
+            history={ history }
+            receitasfilter={ receitasfilter }
+          /> : ''}
           <h1 data-testid="page-title">
             {pathname === '/meals' ? 'Meals' : 'Drinks'}
           </h1>
@@ -57,9 +63,11 @@ class Header extends Component {
     ) {
       return (
         <div>
-          <button>
-            <img src={ imagem } alt="" data-testid="profile-top-btn" />
-          </button>
+          <Link to="/profile">
+            <button>
+              <img src={ imagem } alt="" data-testid="profile-top-btn" />
+            </button>
+          </Link>
           <h1 data-testid="page-title">
             {pathname === '/profile' ? 'Profile' : ''}
             {pathname === '/done-recipes' ? 'Done Recipes' : ''}
@@ -70,22 +78,49 @@ class Header extends Component {
     }
   };
 
+  renderReceitesas = () => {
+    const { receitas } = this.props;
+    if (receitas) {
+      console.log(receitas);
+      return receitas.map((receita, index) => (
+        <div key={ index } data-testid={ `${index}-recipe-card` }>
+          <h3
+            className="titulo-receitas"
+            data-testid={ `${index}-card-name` }
+          >
+            {receita.strMeal ? receita.strMeal : receita.strDrink}
+
+          </h3>
+          <img
+            className="imagens-receitas"
+            data-testid={ `${index}-card-img` }
+            src={ receita.strMealThumb ? receita.strMealThumb : receita.strDrinkThumb }
+            alt=""
+          />
+        </div>
+      ));
+    }
+  };
+
   render() {
     return (
       <div>
         {this.rendeObjst()}
-
+        {this.renderReceitesas()}
       </div>
     );
   }
 }
+const mapStateToProps = (state) => ({
+  receitas: state.receitas,
+});
 
-export default Header;
-
+export default connect(mapStateToProps)(Header);
 Header.propTypes = {
   history: PropTypes.shape({
     location: PropTypes.shape({
       pathname: PropTypes.string,
     }),
   }).isRequired,
+  receitas: PropTypes.arrayOf(PropTypes.arrayOf).isRequired,
 };

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { addreceitas } from '../redux/action';
 
 class SearchBar extends Component {
   constructor(props) {
@@ -11,63 +13,67 @@ class SearchBar extends Component {
     };
   }
 
-  inputSearch = async ({ target }) => {
+  inputSearch = ({ target }) => {
     const { value } = target;
     this.setState({ search: value });
   };
 
-  handleChange = async ({ target }) => {
+  handleChange = ({ target }) => {
     const { value } = target;
     this.setState({ radios: value });
   };
 
-  foodFilter = async () => {
-    const { search, radios } = this.state;
+  filterAllIngredients = async () => {
     const obj = {
       ingredient: 'filter.php?i',
       name: 'search.php?s',
       'first-letter': 'search.php?f',
     };
-    const param = `${obj[radios]}=${search}`;
-
-    if (radios === 'first-letter' && search.length > 1) {
-      global.alert('Your search must have only 1 (one) character');
-    } else {
-      const response = await fetch(`https://www.themealdb.com/api/json/v1/1/${param}`);
-      const data = await response.json();
-      console.log(data);
-      return data;
-    }
-  };
-
-  drinksFilter = async () => {
-    const { search, radios } = this.state;
-    const obj = {
-      ingredient: 'filter.php?i',
-      name: 'search.php?s',
-      'first-letter': 'search.php?f',
-    };
-    const param = `${obj[radios]}=${search}`;
-
-    if (radios === 'first-letter' && search.length > 1) {
-      global.alert('Your search must have only 1 (one) character');
-    } else {
-      const response = await fetch(`https://www.thecocktaildb.com/api/json/v1/1/${param}`);
-      const data = await response.json();
-      console.log(data);
-      return data;
-    }
-  };
-
-  handleClick = async () => {
     const { pathname } = this.props;
-    console.log(pathname);
+    const { search, radios } = this.state;
+    const param = `${obj[radios]}=${search}`;
+    let urlApi = '';
     if (pathname === '/meals') {
-      const resultReceitas = await this.foodFilter();
-      this.setState({ receitas: resultReceitas });
+      urlApi = `https://www.themealdb.com/api/json/v1/1/${param}`;
     } else if (pathname === '/drinks') {
-      const resultReceitas = await this.drinksFilter();
-      this.setState({ receitas: resultReceitas });
+      urlApi = `https://www.thecocktaildb.com/api/json/v1/1/${param}`;
+    }
+    if (radios === 'first-letter' && search.length > 1) {
+      global.alert('Your search must have only 1 (one) character');
+    } else {
+      const response = await fetch(urlApi);
+      const data = await response.json();
+      this.setState({ receitas: data }, this.redirectReceitas);
+      return data;
+    }
+  };
+
+  redirectReceitas = () => {
+    const { receitas } = this.state;
+    const { pathname, history, dispatch } = this.props;
+    const local = {
+      '/drinks': 'drinks',
+      '/meals': 'meals',
+    };
+    const getIds = {
+      '/drinks': 'idDrink',
+      '/meals': 'idMeal',
+    };
+
+    const localKey = local[pathname];
+    const getIdKey = getIds[pathname];
+    const validateUrl = localKey !== undefined;
+    const saveReceita = receitas && receitas[localKey];
+
+    if (!saveReceita) {
+      global.alert('Sorry, we haven\'t found any recipes for these filters.');
+    } else if (validateUrl && saveReceita.length === 1) {
+      const getId = saveReceita[0][getIdKey];
+      history.push(`${pathname}/${getId}`);
+    } else if (validateUrl && saveReceita.length > 1) {
+      const number = 12;
+      const filterReceitas = saveReceita.slice(0, number);
+      dispatch(addreceitas(filterReceitas));
     }
   };
 
@@ -115,7 +121,7 @@ class SearchBar extends Component {
         </label>
         <button
           data-testid="exec-search-btn"
-          onClick={ this.handleClick }
+          onClick={ this.filterAllIngredients }
         >
           buscar
 
@@ -124,8 +130,14 @@ class SearchBar extends Component {
     );
   }
 }
-export default SearchBar;
-
+export default connect()(SearchBar);
 SearchBar.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string,
+    }),
+  }).isRequired,
   pathname: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
