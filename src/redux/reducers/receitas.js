@@ -1,4 +1,4 @@
-import { ADD_RECEITAS } from '../action';
+import { ADD_RECEITAS } from '../actions';
 
 const INITIAL_STATE = {
   receitas: [],
