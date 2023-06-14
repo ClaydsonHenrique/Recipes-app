@@ -11,7 +11,9 @@ const searchName = 'name-search-radio';
 const btn = 'exec-search-btn';
 describe('testando o componente SearchBar', () => {
   it('verificando se searshBar renderiza todos os inputs e botão', () => {
-    renderWithRouterAndRedux(<SearchBar pathname="/meals" />);
+    const initialEntries = ['/meals'];
+    const initialState = { email: '', receitas: [] };
+    renderWithRouterAndRedux(<SearchBar pathname="/meals" />, { initialEntries, initialState });
 
     const inputBusca = screen.getByTestId(search);
     expect(inputBusca).toBeInTheDocument();
@@ -116,8 +118,8 @@ describe('testando o componente SearchBar', () => {
     });
   });
   it('', async () => {
-    const initialState = [{ receitas: [] }];
-    const { store } = renderWithRouterAndRedux(<SearchBar pathname="/drinks" />, initialState);
+    const initialState = { email: '', receitas: [] };
+    const { store } = renderWithRouterAndRedux(<SearchBar pathname="/drinks" />, { initialState });
     const inputBusca = screen.getByTestId(search);
     const radioName = screen.getByTestId(searchName);
     const btnSearch = screen.getByTestId(btn);
@@ -125,6 +127,9 @@ describe('testando o componente SearchBar', () => {
     fireEvent.change(inputBusca, { target: { value: 'gin' } });
     fireEvent.click(radioName);
     fireEvent.click(btnSearch);
-    console.log(store.getState());
+
+    await waitFor(() => {
+      expect(store.getState().receitas.receitas.length).toBe(12);
+    });
   });
 });

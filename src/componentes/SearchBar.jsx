@@ -50,6 +50,7 @@ class SearchBar extends Component {
 
   redirectReceitas = () => {
     const { receitas } = this.state;
+
     const { pathname, history, dispatch } = this.props;
     const local = {
       '/drinks': 'drinks',
@@ -64,7 +65,6 @@ class SearchBar extends Component {
     const getIdKey = getIds[pathname];
     const validateUrl = localKey !== undefined;
     const saveReceita = receitas && receitas[localKey];
-
     if (!saveReceita) {
       global.alert('Sorry, we haven\'t found any recipes for these filters.');
     } else if (validateUrl && saveReceita.length === 1) {

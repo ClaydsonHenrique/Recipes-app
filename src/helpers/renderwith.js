@@ -53,7 +53,6 @@ export function renderWithRouterAndRedux(component, options = {}) {
     initialEntries = ['/'],
     history = createMemoryHistory({ initialEntries }),
   } = options;
-
   return {
     ...renderWithRedux(withRouter(component, history), options),
     history,

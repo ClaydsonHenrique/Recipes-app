@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import submitEmail from '../redux/actions';
 import './login.css';
 
@@ -9,15 +10,11 @@ class Login extends Component {
     btnDisabled: true,
     email: '',
     password: '',
-
   };
 
   handleValidation = () => {
     const { email, password } = this.state;
-
     const MAGIC_NUMBER = 6;
-    /* const minLength = password.length >= minEmail; */
-
     const confirm = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (confirm.test(email) || password.length > MAGIC_NUMBER) {
       this.setState({
@@ -93,4 +90,4 @@ Login.propTypes = {
   }).isRequired,
 };
 
-export default connect()(Login);
+export default withRouter(connect()(Login));

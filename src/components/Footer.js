@@ -24,9 +24,8 @@ class Footer extends Component {
         data-testid="footer"
       >
         <div className="footer_images-container">
-          <span>
+          <span className="footer__drink-img">
             <a
-              className="footer__drink-img"
               href="/drinks"
               onClick={ this.handleClickDrinks }
             >
@@ -37,9 +36,8 @@ class Footer extends Component {
               />
             </a>
           </span>
-          <span>
+          <span className="footer__meal-img">
             <a
-              className="footer__meal-img"
               href="/meals"
               onClick={ this.handleClickMeals }
             >

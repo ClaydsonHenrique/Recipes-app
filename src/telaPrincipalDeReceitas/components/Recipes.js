@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
 import '../../css/Header.css';
+import Footer from '../../components/Footer';
 
 const MAX_RECIPES = 12;
 const MAX_CATEGORIES = 5;
@@ -103,7 +104,7 @@ function Recipes({ receitas }) {
                 className="titulo-receitas"
               >
                 <img
-                  className="titulo-receitas"
+                  className="imagens-receitas"
                   src={ recipe.strMealThumb || recipe.strDrinkThumb }
                   alt={ recipe.strMeal || recipe.strDrink }
                   data-testid={ `${index}-card-img` }
@@ -135,6 +136,7 @@ function Recipes({ receitas }) {
           ))
         )}
       </ul>
+      <Footer />
     </div>
   );
 }
