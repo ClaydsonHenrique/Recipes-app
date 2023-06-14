@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useHistory } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import RecipesContext from '../context/RecipesContext';
+import '../../css/Header.css';
 
 const MAX_RECIPES = 12;
 const MAX_CATEGORIES = 5;
 
-function Recipes() {
+function Recipes({ receitas }) {
   const { meals, drinks, mealCategories, drinkCategories } = useContext(RecipesContext);
   const location = useLocation();
   const history = useHistory();
@@ -81,36 +84,65 @@ function Recipes() {
 
       <h3>Recipes</h3>
       <ul>
-        {filteredRecipes.slice(0, MAX_RECIPES).map((recipe, index) => (
-          <li key={ index } data-testid={ `${index}-recipe-card` }>
-            <Link
-              to={
-                location.pathname === '/meals'
-                  ? `/meals/${recipe.idMeal}`
-                  : `/drinks/${recipe.idDrink}`
-              }
-              onClick={ () => handleRecipeClick(recipe.idMeal || recipe.idDrink) }
-              onKeyPress={ (event) => {
-                if (event.key === 'Enter') {
-                  handleRecipeClick(recipe.idMeal || recipe.idDrink);
+        {receitas.length === 0 ? (
+          filteredRecipes.slice(0, MAX_RECIPES).map((recipe, index) => (
+            <li key={ index } data-testid={ `${index}-recipe-card` }>
+              <Link
+                to={
+                  location.pathname === '/meals'
+                    ? `/meals/${recipe.idMeal}`
+                    : `/drinks/${recipe.idDrink}`
                 }
-              } }
-              tabIndex={ 0 }
-            >
+                onClick={ () => handleRecipeClick(recipe.idMeal || recipe.idDrink) }
+                onKeyPress={ (event) => {
+                  if (event.key === 'Enter') {
+                    handleRecipeClick(recipe.idMeal || recipe.idDrink);
+                  }
+                } }
+                tabIndex={ 0 }
+                className="titulo-receitas"
+              >
+                <img
+                  className="titulo-receitas"
+                  src={ recipe.strMealThumb || recipe.strDrinkThumb }
+                  alt={ recipe.strMeal || recipe.strDrink }
+                  data-testid={ `${index}-card-img` }
+                />
+                <span data-testid={ `${index}-card-name` }>
+                  {recipe.strMeal || recipe.strDrink}
+                </span>
+              </Link>
+            </li>
+          ))
+        ) : (
+          receitas.map((receita, index) => (
+            <div key={ index } data-testid={ `${index}-recipe-card` }>
+              <h3
+                className="titulo-receitas"
+                data-testid={ `${index}-card-name` }
+              >
+                {receita.strMeal ? receita.strMeal : receita.strDrink}
+
+              </h3>
               <img
-                src={ recipe.strMealThumb || recipe.strDrinkThumb }
-                alt={ recipe.strMeal || recipe.strDrink }
+                className="imagens-receitas"
                 data-testid={ `${index}-card-img` }
+                src={ receita.strMealThumb
+                  ? receita.strMealThumb : receita.strDrinkThumb }
+                alt=""
               />
-              <span data-testid={ `${index}-card-name` }>
-                {recipe.strMeal || recipe.strDrink}
-              </span>
-            </Link>
-          </li>
-        ))}
+            </div>
+          ))
+        )}
       </ul>
     </div>
   );
 }
+const mapStateToProps = (state) => ({
+  receitas: state.receitas.receitas,
+});
 
-export default Recipes;
+export default connect(mapStateToProps)(Recipes);
+Recipes.propTypes = {
+  receitas: PropTypes.arrayOf(PropTypes.arrayOf).isRequired,
+};

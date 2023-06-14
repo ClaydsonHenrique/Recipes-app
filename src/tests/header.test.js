@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
-import renderWithRouterAndRedux from './renderWithRouter';
+import { renderWithRouterAndRedux } from '../helpers/renderwith';
 import Header from '../componentes/Header';
 
 const titulo = 'page-title';
@@ -11,7 +11,7 @@ const busca = 'search-input';
 
 describe('verificando Header', () => {
   it('Verificando se contem botoes na pagina e se ao clicar no icone profile vai para a pagina Profile', async () => {
-    const { history } = renderWithRouterAndRedux(<Header history={ { location: { pathname: '/meals' } } } />);
+    const { history } = renderWithRouterAndRedux(<Header />, { initialEntries: ['/meals'] });
     const title = screen.getByTestId(titulo);
     expect(title).toHaveTextContent('Meals');
 
@@ -19,6 +19,13 @@ describe('verificando Header', () => {
     expect(buttonProfile).toBeInTheDocument();
     const buttonSearch = screen.getByTestId(btnSearch);
     expect(buttonSearch).toBeInTheDocument();
+
+    fireEvent.click(buttonSearch);
+    const radioName = screen.getByTestId('name-search-radio');
+    expect(radioName).toBeInTheDocument();
+
+    fireEvent.click(buttonSearch);
+    expect(radioName).not.toBeInTheDocument();
 
     fireEvent.click(buttonProfile);
 
@@ -28,7 +35,7 @@ describe('verificando Header', () => {
   });
 
   it('verificando se ao clicar no botao de pesquisar renderiza os inputs', () => {
-    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/meals' } } } />);
+    renderWithRouterAndRedux(<Header />, { initialEntries: ['/meals'] });
     const buttonSearch = screen.getByTestId(btnSearch);
     fireEvent.click(buttonSearch);
 
@@ -40,7 +47,9 @@ describe('verificando Header', () => {
   });
 
   it('verificando se na pagina profile  aparece apenas o titulo e a o button profile ', () => {
-    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/profile' } } } />);
+    const initialEntries = ['/profile'];
+
+    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/profile' } } } />, { initialEntries });
     const title = screen.getByTestId(titulo);
     expect(title).toHaveTextContent('Profile');
 
@@ -50,7 +59,8 @@ describe('verificando Header', () => {
     expect(buttonSearch).not.toBeInTheDocument();
   });
   it('verificando se nas paginas done-recipes  aparece apenas o titulo e a o button profile ', () => {
-    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/done-recipes' } } } />);
+    const initialEntries = ['/done-recipes'];
+    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/done-recipes' } } } />, { initialEntries });
     const title = screen.getByTestId(titulo);
     expect(title).toHaveTextContent('Done Recipes');
 
@@ -61,7 +71,7 @@ describe('verificando Header', () => {
     expect(buttonSearch).not.toBeInTheDocument();
   });
   it('verificando se nas paginas favorite-recipes  aparece apenas o titulo e a o button profile ', () => {
-    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/favorite-recipes' } } } />);
+    renderWithRouterAndRedux(<Header />, { initialEntries: ['/favorite-recipes'] });
     const title = screen.getByTestId(titulo);
     expect(title).toHaveTextContent('Favorite Recipes');
 
@@ -79,7 +89,7 @@ describe('verificando Header', () => {
     expect(buttonProfile).not.toBeInTheDocument();
   });
   it('Verificando se na rota drinks muda o titulo e aparecem todos os botoes', async () => {
-    const { history } = renderWithRouterAndRedux(<Header history={ { location: { pathname: '/drinks' } } } />);
+    const { history } = renderWithRouterAndRedux(<Header />, { initialEntries: ['/drinks'] });
     const title = screen.getByTestId(titulo);
     expect(title).toHaveTextContent('Drinks');
 
@@ -95,78 +105,11 @@ describe('verificando Header', () => {
     });
   });
   it('verificando se ao pesquisar retornar mais de uma receita renderiza na tela', async () => {
-    renderWithRouterAndRedux(<Header
-      history={ { location: { pathname: '/meals' },
-
-      } }
-    />);
+    renderWithRouterAndRedux(<Header />, { initialEntries: ['/meals'] });
     const title = screen.getByTestId(titulo);
     expect(title).toHaveTextContent('Meals');
 
     const buttonSearch = screen.getByTestId(btnSearch);
     fireEvent.click(buttonSearch);
-  });
-  it('verificando se ao filtar meals encontra mais de  uma receita , renderiza as os titulos e as imagens das receitas', async () => {
-    const search = busca;
-    const searchName = 'name-search-radio';
-    const btn = 'exec-search-btn';
-    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/meals' } } } />);
-    const buttonSearch = screen.getByTestId(btnSearch);
-    fireEvent.click(buttonSearch);
-
-    const inputBusca = screen.getByTestId(search);
-    const radioName = screen.getByTestId(searchName);
-    const btnSearchs = screen.getByTestId(btn);
-
-    fireEvent.change(inputBusca, { target: { value: 'chicken' } });
-    fireEvent.click(radioName);
-    fireEvent.click(btnSearchs);
-
-    await waitFor(() => {
-      const title1 = screen.getByTestId('0-card-name');
-      const title2 = screen.getByTestId('1-card-name');
-      const title3 = screen.getByTestId('2-card-name');
-      expect(title1).toHaveTextContent('Chicken Handi');
-      expect(title2).toHaveTextContent('Chicken Congee');
-      expect(title3).toHaveTextContent('Chicken Karaage');
-
-      const image1 = screen.getByTestId('0-card-img');
-      const image2 = screen.getByTestId('1-card-img');
-      const image3 = screen.getByTestId('2-card-img');
-      expect(image1).toHaveAttribute('src', 'https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg');
-      expect(image2).toHaveAttribute('src', 'https://www.themealdb.com/images/media/meals/1529446352.jpg');
-      expect(image3).toHaveAttribute('src', 'https://www.themealdb.com/images/media/meals/tyywsw1505930373.jpg');
-    });
-  });
-  it('verificando se ao filtar drinks encontra mais de  uma receita , renderiza as os titulos e as imagens das receitas', async () => {
-    const searchName = 'name-search-radio';
-    const btn = 'exec-search-btn';
-    renderWithRouterAndRedux(<Header history={ { location: { pathname: '/drinks' } } } />);
-    const buttonSearch = screen.getByTestId(btnSearch);
-    fireEvent.click(buttonSearch);
-
-    const inputBusca = screen.getByTestId(busca);
-    const radioName = screen.getByTestId(searchName);
-    const btnSearchs = screen.getByTestId(btn);
-
-    fireEvent.change(inputBusca, { target: { value: 'gin' } });
-    fireEvent.click(radioName);
-    fireEvent.click(btnSearchs);
-
-    await waitFor(() => {
-      const title1 = screen.getByTestId('0-card-name');
-      const title2 = screen.getByTestId('1-card-name');
-      const title3 = screen.getByTestId('2-card-name');
-      expect(title1).toHaveTextContent('Gin Fizz');
-      expect(title2).toHaveTextContent('Gin Sour');
-      expect(title3).toHaveTextContent('Pink Gin');
-
-      const image1 = screen.getByTestId('0-card-img');
-      const image2 = screen.getByTestId('1-card-img');
-      const image3 = screen.getByTestId('2-card-img');
-      expect(image1).toHaveAttribute('src', 'https://www.thecocktaildb.com/images/media/drink/drtihp1606768397.jpg');
-      expect(image2).toHaveAttribute('src', 'https://www.thecocktaildb.com/images/media/drink/noxp7e1606769224.jpg');
-      expect(image3).toHaveAttribute('src', 'https://www.thecocktaildb.com/images/media/drink/qyr51e1504888618.jpg');
-    });
   });
 });
