@@ -1,8 +1,18 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 function Profile() {
+  const history = useHistory();
   const storedUser = JSON.parse(localStorage.getItem('user'));
   const userEmail = storedUser ? storedUser.email : '';
+
+  const handleDoneRecipes = () => {
+    history.push('/done-recipes');
+  };
+
+  const handleFavoriteRecipes = () => {
+    history.push('/favorite-recipes');
+  };
 
   return (
     <div>
@@ -12,8 +22,12 @@ function Profile() {
         {' '}
         {userEmail}
       </p>
-      <button data-testid="profile-done-btn">Done Recipes</button>
-      <button data-testid="profile-favorite-btn">Favorite Recipes</button>
+      <button data-testid="profile-done-btn" onClick={ handleDoneRecipes }>
+        Done Recipes
+      </button>
+      <button data-testid="profile-favorite-btn" onClick={ handleFavoriteRecipes }>
+        Favorite Recipes
+      </button>
       <button data-testid="profile-logout-btn">Logout</button>
     </div>
   );
