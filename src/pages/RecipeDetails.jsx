@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import Button from '../components/Button';
+import { useLocation, useParams, useHistory } from 'react-router-dom';
 import './RecipeDetails.css';
+import copy from 'clipboard-copy';
 
 const MEALS = 'meals';
 const DRINKS = 'drinks';
@@ -18,6 +18,14 @@ function RecipeDetails() {
   const [ingredients, setIngredients] = useState([]);
   const [videoId, setVideoId] = useState('');
   const [recommendationData, setRecommendationData] = useState([]);
+  const [copied, setCopied] = useState(false);
+  const history = useHistory();
+  // Setando provisoriamente as informações no localstorage
+  localStorage
+    .setItem('doneRecipes', JSON.stringify([{ id: '52908' }]));
+  localStorage
+    .setItem('inProgressRecipes', JSON
+      .stringify({ meals: { 52771: [] }, drinks: { 178319: [] } }));
 
   // Define uma função para retornar a URL e tipo com base no caminho atual
   const getUrl = () => {
@@ -55,6 +63,21 @@ function RecipeDetails() {
 
     fetchRecipe();
   }, [urlAndType]);
+  // Verifica se essa receita já foi feita anteriormente
+  const VerifyDoneRecipes = () => {
+    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
+    const searchID = doneRecipes.findIndex((el) => el.id === id);
+    return searchID >= 0;
+  };
+  // Verifica se a receita está na lista de receitas em progresso
+  const VerifyInProgressRecipes = () => {
+    const inProgressRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const KeysProgressRecipes = urlAndType.type === 'meals'
+      ? Object.keys(inProgressRecipes.meals)
+      : Object.keys(inProgressRecipes.drinks);
+    const searchProgressRecipes = KeysProgressRecipes.findIndex((el) => el === id);
+    return searchProgressRecipes >= 0;
+  };
 
   // Executa o efeito sempre que os dados da receita mudarem
   useEffect(() => {
@@ -153,17 +176,14 @@ function RecipeDetails() {
       ) : (
         <p data-testid="recipe-category">{recipeData.strAlcoholic}</p>
       )}
-
       <h2>Ingredients</h2>
       <ul data-testid="ingredients-list" className="ingredients-list">
         {ingredientElements.map((ingredient, index) => (
           <li key={ index }>{ingredient}</li>
         ))}
       </ul>
-
       <h2>Instructions</h2>
       <p data-testid="instructions">{recipeData.strInstructions}</p>
-
       <h2>Video</h2>
       <iframe
         data-testid="video"
@@ -174,7 +194,6 @@ function RecipeDetails() {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media"
         allowFullScreen
       />
-
       <h2>Recommendations</h2>
       <ul className="recommendations">
         {recommendationData.slice(0, six).map((item, index) => (
@@ -202,10 +221,40 @@ function RecipeDetails() {
           </li>
         ))}
       </ul>
+      <div>
+        {!VerifyDoneRecipes() && VerifyInProgressRecipes()
+      && (
+        <button
+          className="Fixed"
+          data-testid="start-recipe-btn"
+          onClick={ () => history.push(`/${urlAndType.type}/${id}/in-progress`) }
+        >
+          Start Recipe
+        </button>)}
 
-      <Button />
+        {VerifyInProgressRecipes() && !VerifyDoneRecipes()
+      && (
+        <button
+          data-testid="start-recipe-btn"
+        >
+          Continue Recipe
+        </button>
+      ) }
+        <button
+          data-testid="share-btn"
+          onClick={ () => {
+            copy(document.location.href);
+            setCopied(true);
+          } }
+        >
+          Compartilhar
+        </button>
+        {copied && (<p>Link copied!</p>)}
+        <button data-testid="favorite-btn">
+          Favoritar
+        </button>
+      </div>
     </div>
   );
 }
-
 export default RecipeDetails;
