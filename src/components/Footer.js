@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import meal from '../images/mealIcon.svg';
 import drink from '../images/drinkIcon.svg';
@@ -23,9 +24,8 @@ class Footer extends Component {
         data-testid="footer"
       >
         <div className="footer_images-container">
-          <span>
+          <span className="footer__drink-img">
             <a
-              className="footer__drink-img"
               href="/drinks"
               onClick={ this.handleClickDrinks }
             >
@@ -36,9 +36,8 @@ class Footer extends Component {
               />
             </a>
           </span>
-          <span>
+          <span className="footer__meal-img">
             <a
-              className="footer__meal-img"
               href="/meals"
               onClick={ this.handleClickMeals }
             >
@@ -61,4 +60,4 @@ Footer.propTypes = {
   }).isRequired,
 };
 
-export default connect()(Footer);
+export default withRouter(connect()(Footer));

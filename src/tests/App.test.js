@@ -1,9 +1,9 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import { renderWithRouterAndRedux } from '../helpers/renderwith';
 import App from '../App';
+import Login from '../pages/Login';
 import Footer from '../components/Footer';
 
 describe('test login page features', () => {
@@ -21,28 +21,37 @@ describe('test login page features', () => {
     screen.getByTestId('password-input');
   });
 
-  test('the disabled/enabled button dynamic', () => {
-    const { history } = renderWithRouterAndRedux(<App />);
-    const button = screen.getByRole('button', { name: /Enter/i,
-    });
+  test('the disabled/enabled button dynamic', async () => {
+    const { history, store } = renderWithRouterAndRedux(<Login />);
+
+    const button = screen.getByTestId('login-submit-btn');
 
     expect(button).toBeDisabled();
 
-    const inputEmail = 'teste@teste.com';
-    const inputPassword = '1234567';
+    let inputEmail = 'teste@testecom';
+    let inputPassword = '123';
 
-    const emailID = screen.getByTestId('email-input');
-    const passwordID = screen.getByTestId('password-input');
+    const emailInput = screen.getByTestId('email-input');
+    expect(emailInput).toBeInTheDocument();
+    const passwordInput = screen.getByTestId('password-input');
+    expect(passwordInput).toBeInTheDocument();
+    fireEvent.change(emailInput, { target: { value: inputEmail } });
+    fireEvent.change(passwordInput, { target: { value: inputPassword } });
+    expect(button).toBeDisabled();
 
-    userEvent.type(emailID, inputEmail);
-    userEvent.type(passwordID, inputPassword);
+    inputEmail = 'teste@teste.com';
+    inputPassword = '1234567';
+
+    fireEvent.change(emailInput, { target: { value: inputEmail } });
+    fireEvent.change(passwordInput, { target: { value: inputPassword } });
 
     expect(button).toBeEnabled();
 
-    userEvent.click(button);
-    const { pathname } = history.location;
-
-    expect(pathname).toBe('/meals');
+    fireEvent.click(button);
+    expect(store.getState().email.email).toBe('{"email":"teste@teste.com"}');
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/meals');
+    });
   });
 
   test('the footer images renders', () => {
@@ -51,19 +60,22 @@ describe('test login page features', () => {
     screen.getByAltText(/drink/i);
     screen.getByAltText(/meal/i);
   });
-  it('should be a clickable image', () => {
-    const history = createMemoryHistory();
-    renderWithRouterAndRedux(<Footer />);
+  it('should be a clickable image', async () => {
+    const { history } = renderWithRouterAndRedux(<Footer />);
 
     const drinkImage = screen.getByTestId('drinks-bottom-btn');
     const mealImage = screen.getByTestId('meals-bottom-btn');
 
-    const { pathname } = history.location;
+    fireEvent.click(drinkImage);
 
-    userEvent.click(drinkImage);
-    expect(pathname).toBe('/drinks');
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/drinks');
+    });
 
-    userEvent.click(mealImage);
-    expect(pathname).toBe('/meals');
+    fireEvent.click(mealImage);
+
+    await waitFor(() => {
+      expect(history.location.pathname).toBe('/meals');
+    });
   });
 });
