@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Header from './componentes/Header';
 import RecipesProvider from './telaPrincipalDeReceitas/context/RecipesProvider';
 import Recipes from './telaPrincipalDeReceitas/components/Recipes';
+import DoneRecipes from './pages/DoneRecipes';
 
 function App() {
   return (
@@ -28,7 +29,7 @@ function App() {
             <Route path="/meals" component={ Recipes } />
             <Route path="/drinks" component={ Recipes } />
             <Route exact path="/profile" component={ Profile } />
-            <Route exact component={ Header } path="/done-recipes" />
+            <Route exact component={ DoneRecipes } path="/done-recipes" />
             <Route exact component={ Header } path="/favorite-recipes" />
           </Switch>
 
