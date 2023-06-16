@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 import './RecipeDetails.css';
 import copy from 'clipboard-copy';
+import { verifyDoneRecipes,
+  verifyInProgressRecipes, getValidIngredients } from '../helpers/recipeHelpers';
 
 const MEALS = 'meals';
 const DRINKS = 'drinks';
@@ -63,55 +65,10 @@ function RecipeDetails() {
 
     fetchRecipe();
   }, [urlAndType]);
-  // Verifica se essa receita já foi feita anteriormente
-  const VerifyDoneRecipes = () => {
-    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes'));
-    const searchID = doneRecipes.findIndex((el) => el.id === id);
-    return searchID >= 0;
-  };
-  // Verifica se a receita está na lista de receitas em progresso
-  const VerifyInProgressRecipes = () => {
-    const inProgressRecipes = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    const KeysProgressRecipes = urlAndType.type === 'meals'
-      ? Object.keys(inProgressRecipes.meals)
-      : Object.keys(inProgressRecipes.drinks);
-    const searchProgressRecipes = KeysProgressRecipes.findIndex((el) => el === id);
-    return searchProgressRecipes >= 0;
-  };
 
-  // Executa o efeito sempre que os dados da receita mudarem
   useEffect(() => {
-    // Define uma função para obter os ingredientes válidos da receita
-    const getValidIngredients = () => {
-      const ingredientData = Object.entries(recipeData).filter((item) => {
-        const isIngredient = item[0].includes('strIngredient')
-          || item[0].includes('strMeasure');
-        const isNotNull = item[1];
-        const isNotEmpty = isNotNull
-          ? item[1] !== '' && item[1] !== ' '
-          : isNotNull;
-
-        if (isIngredient && isNotEmpty) {
-          return item;
-        }
-        return false;
-      });
-
-      const max = ingredientData.length / 2;
-      const ingredientPart = ingredientData
-        .slice(0, max)
-        .map((ingredient) => ingredient[1]);
-      const measurePart = ingredientData
-        .slice(max)
-        .map((measure) => measure[1]);
-
-      return ingredientPart.map((ingredient, index) => ({
-        ingredient,
-        measure: measurePart[index],
-      }));
-    };
-
-    setIngredients(getValidIngredients());
+    const validIngredients = getValidIngredients(recipeData);
+    setIngredients(validIngredients);
   }, [recipeData]);
 
   // Executa o efeito sempre que o campo strYoutube dos dados da receita mudar
@@ -222,7 +179,7 @@ function RecipeDetails() {
         ))}
       </ul>
       <div>
-        {!VerifyDoneRecipes() && VerifyInProgressRecipes()
+        {!verifyDoneRecipes() && !verifyInProgressRecipes()
       && (
         <button
           className="Fixed"
@@ -231,11 +188,11 @@ function RecipeDetails() {
         >
           Start Recipe
         </button>)}
-
-        {VerifyInProgressRecipes() && !VerifyDoneRecipes()
+        {!verifyInProgressRecipes() && !verifyDoneRecipes()
       && (
         <button
           data-testid="start-recipe-btn"
+          className="FixedRight"
         >
           Continue Recipe
         </button>
