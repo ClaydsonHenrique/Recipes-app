@@ -5,15 +5,12 @@
     padding: 5px;
     width: 300px;
   }
-  
   .recomendations-card img {
     width: 120px;
   }
-  
   .recomendations-card div {
     margin: 0 12px;
   }
-  
   .start-recipe-btn {
     bottom: 0;
     position: fixed;
