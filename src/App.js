@@ -10,6 +10,8 @@ import RecipesProvider from './telaPrincipalDeReceitas/context/RecipesProvider';
 import Recipes from './telaPrincipalDeReceitas/components/Recipes';
 import DoneRecipes from './pages/DoneRecipes';
 import RecipeDetails from './pages/RecipeDetails';
+import FoodInProgress from './pages/FoodInProcess';
+import DrinkInProcess from './pages/DrinkInProcess';
 
 function App() {
   return (
@@ -34,6 +36,16 @@ function App() {
             <Route exact component={ Header } path="/favorite-recipes" />
             <Route path="/meals/:id" component={ RecipeDetails } />
             <Route path="/drinks/:id" component={ RecipeDetails } />
+            <Route
+              path="/meals/:id/in-progress"
+              exact
+              component={ FoodInProgress }
+            />
+            <Route
+              path="/drinks/:id/in-progress"
+              exact
+              component={ DrinkInProcess }
+            />
           </Switch>
 
         </RecipesProvider>

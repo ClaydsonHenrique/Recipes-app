@@ -4,6 +4,7 @@ import './RecipeDetails.css';
 import copy from 'clipboard-copy';
 import { verifyDoneRecipes,
   verifyInProgressRecipes, getValidIngredients } from '../helpers/recipeHelpers';
+import StartRecipeButton from '../components/StartRecipeButton';
 
 const MEALS = 'meals';
 const DRINKS = 'drinks';
@@ -190,12 +191,7 @@ function RecipeDetails() {
         </button>)}
         {!verifyInProgressRecipes() && !verifyDoneRecipes()
       && (
-        <button
-          data-testid="start-recipe-btn"
-          className="FixedRight"
-        >
-          Continue Recipe
-        </button>
+        <StartRecipeButton type={ type } id={ id } recipe={ recipe } />
       ) }
         <button
           data-testid="share-btn"
