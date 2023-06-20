@@ -9,11 +9,11 @@ import FavoriteButton from './FavoriteButton';
 import FinishRecipeButton from './FinishRecipeButton';
 import { progessStorage, getProgessStorage } from '../helpers/progressRecipesStorage';
 
-export default function RecipesInProgress(prop) {
+export default function Process(prop) {
   const { pathname } = prop;
   const id = pathname.split('/')[2];
-  const type = useMemo(() => ((pathname.split('/')[1] === 'foods')
-    ? ['meals', 'meals'] : ['drinks', 'cocktails']), [pathname]);
+  const type = useMemo(() => ((pathname.split('/')[1] === 'meals') ? (
+    ['meals', 'meals']) : ['drinks', 'cocktails']), [pathname]);
   const url = `${chooseURL(type[0])}lookup.php?i=${id}`;
   const data = useApi(url, pathname);
   const [selectedIngredient, setSelectedIngredient] = useState([]);
@@ -26,26 +26,49 @@ export default function RecipesInProgress(prop) {
 
   useEffect(() => {
     getProgessStorage(type[1], setSelectedIngredient, id);
-  }, [type, id]);
+  }, [type, setSelectedIngredient, id]);
 
   useEffect(() => {
     progessStorage(type[1], selectedIngredient, id);
-  }, [selectedIngredient, id, type]);
+  }, [type, selectedIngredient, id]);
+
+  // Função para adicionar a comida feita no localStorage
+  const addToLocalStorage = () => {
+    const doneRecipes = JSON.parse(localStorage.getItem('doneRecipes')) || [];
+    const newRecipe = {
+      id,
+      type: type[1],
+      area: recipe.strArea || '',
+      category: recipe.strCategory || '',
+      alcoholicOrNot: recipe.strAlcoholic || '',
+      name: recipe.strMeal || recipe.strDrink || '',
+      image: recipe.strMealThumb || recipe.strDrinkThumb || '',
+      doneDate: new Date().toLocaleDateString(),
+      tags: recipe.strTags ? recipe.strTags.split(',') : [],
+    };
+
+    doneRecipes.push(newRecipe);
+    localStorage.setItem('doneRecipes', JSON.stringify(doneRecipes));
+  };
 
   function checkedTest({ target }) {
     if (target.checked) {
       setSelectedIngredient([...selectedIngredient, target.name]);
-      return;
+    } else {
+      setSelectedIngredient(selectedIngredient.filter(
+        (ingredient) => ingredient !== target.name,
+      ));
     }
-    setSelectedIngredient(selectedIngredient
-      .filter((ingredient) => ingredient !== target.name));
   }
 
   function list(ingredients) {
     return ingredients.map((ingredient, index) => (
       <li
-        style={ selectedIngredient.includes(ingredient.name) ? (
-          { textDecoration: 'line-through' }) : { textDecoration: 'none' } }
+        style={
+          selectedIngredient.includes(ingredient.name)
+            ? { textDecoration: 'line-through solid rgb(0, 0, 0)' }
+            : { textDecoration: 'none' }
+        }
         key={ index }
         data-testid={ `${index}-ingredient-step` }
         name={ ingredient.name }
@@ -96,6 +119,7 @@ export default function RecipesInProgress(prop) {
           recipe={ recipe }
           type={ type[1] }
           id={ id }
+          addToLocalStorage={ addToLocalStorage } // Adiciona a função ao componente
         />
       </div>
     );
