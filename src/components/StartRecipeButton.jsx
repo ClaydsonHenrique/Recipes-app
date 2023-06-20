@@ -13,14 +13,6 @@ export default function StartRecipeButton(prop) {
     getProgessStorage(type[1], setStorage, id);
   }, [recipe, id, type]);
 
-  useEffect(() => {
-    if (Array.isArray(storage) && storage.length > 0) {
-      setStorage(true);
-    } else {
-      setStorage(false);
-    }
-  }, [storage]);
-
   return (
     <button
       type="button"
@@ -29,6 +21,9 @@ export default function StartRecipeButton(prop) {
       onClick={ () => history.push(`${pathname}/in-progress`) }
     >
       {!storage ? 'Start Recipe' : 'Continue Recipe'}
+      {' '}
+      &&
+      {storage ? 'Start Recipe' : 'Continue Recipe'}
     </button>
   );
 }

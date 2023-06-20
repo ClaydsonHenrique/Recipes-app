@@ -24,11 +24,11 @@ export default function DoneRecipesButtons(prop) {
       </button>
       <button
         type="button"
-        data-testid="filter-by-food-btn"
-        name="food"
+        data-testid="filter-by-meals-btn"
+        name="meals"
         onClick={ (event) => handleClick(event) }
       >
-        Foods
+        Meals
       </button>
       <button
         type="button"

@@ -4,12 +4,14 @@ import whiteHeartIcon from '../images/whiteHeartIcon.svg';
 import blackHeartIcon from '../images/blackHeartIcon.svg';
 import Context from '../context/Context';
 
-export default function FavoriteButton({ recipe, index = null }) {
+const DEFAULT_INDEX = 1000;
+
+export default function FavoriteButton({ recipe, index = DEFAULT_INDEX }) {
   const { favorite, setFavorite } = useContext(Context);
-  const storageData = localStorage.getItem('favoriteRecipes');
-  const prevFavorites = useMemo(() => (storageData ? JSON.parse(storageData) : []), [
-    storageData,
-  ]);
+  const prevFavorites = useMemo(() => {
+    const storageData = localStorage.getItem('favoriteRecipes');
+    return storageData ? JSON.parse(storageData) : [];
+  }, []);
 
   useEffect(() => {
     const isAlreadyFavorite = prevFavorites.some((favRec) => favRec.id === recipe.id);
@@ -27,13 +29,10 @@ export default function FavoriteButton({ recipe, index = null }) {
   };
 
   return (
-    <button
-      type="button"
-      onClick={ handleFavoriteButton }
-    >
+    <button type="button" onClick={ handleFavoriteButton }>
       <img
-        data-testid={ index !== null
-          ? (`${index}-horizontal-favorite-btn`) : 'favorite-btn' }
+        data-testid={ index !== DEFAULT_INDEX
+          ? `${index}-horizontal-favorite-btn` : 'favorite-btn' }
         src={ favorite ? blackHeartIcon : whiteHeartIcon }
         alt="Heart Icon"
       />
@@ -43,7 +42,9 @@ export default function FavoriteButton({ recipe, index = null }) {
 
 FavoriteButton.propTypes = {
   recipe: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    type: PropTypes.string.isRequired,
+    // Add other required properties of the recipe object
   }).isRequired,
   index: PropTypes.number,
 };

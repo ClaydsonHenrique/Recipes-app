@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 export default function FinishRecipeButton(prop) {
-  const [disabled, setSisabled] = useState(true);
+  const [disabled, setDisabled] = useState(true);
   const history = useHistory();
   const storageData = localStorage.getItem('doneRecipes');
   const prevStorage = (storageData) ? JSON.parse(storageData) : [];
@@ -13,22 +13,23 @@ export default function FinishRecipeButton(prop) {
     if (
       selectedIngredient.length > 0 && selectedIngredient.length === ingredientList.length
     ) {
-      return setSisabled(false);
+      setDisabled(false);
+    } else {
+      setDisabled(true);
     }
-    return setSisabled(true);
   }, [selectedIngredient, ingredientList.length]);
 
   function doneRecipeObject() {
     const recipeInfo = {
       id,
-      type: (type === 'meals') ? 'food' : 'drink',
+      type: (type === 'meals') ? 'meals' : 'drink',
       nationality: recipe.strArea || '',
       category: recipe.strCategory,
       alcoholicOrNot: '',
       name: '',
       image: '',
       doneDate: new Date(),
-      tags: [recipe.strTags || []],
+      tags: recipe.strTags ? [recipe.strTags] : [],
     };
 
     if (type === 'meals') {
@@ -39,17 +40,14 @@ export default function FinishRecipeButton(prop) {
       recipeInfo.image = recipe.strDrinkThumb;
       recipeInfo.alcoholicOrNot = recipe.strAlcoholic;
     }
+
     return recipeInfo;
   }
 
   function doneRecipeStorage() {
-    if (!storageData) {
-      localStorage.setItem('doneRecipes', JSON.stringify([doneRecipeObject()]));
-    } else {
-      localStorage.setItem('doneRecipes', JSON.stringify(
-        [...prevStorage, doneRecipeObject()],
-      ));
-    }
+    const doneRecipe = doneRecipeObject();
+    const updatedStorage = [...prevStorage, doneRecipe];
+    localStorage.setItem('doneRecipes', JSON.stringify(updatedStorage));
   }
 
   function handleClick() {

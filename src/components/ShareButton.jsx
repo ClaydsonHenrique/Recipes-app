@@ -5,10 +5,10 @@ import shareIcon from '../images/shareIcon.svg';
 export default function ShareButton(prop) {
   const [linkCopied, setLinkCopied] = useState(false);
   const { type, id, index } = prop;
-  const foodsOurDrinks = type === 'meals' ? 'foods' : 'drinks';
+  const mealsOurDrinks = type === 'meals' ? 'meals' : 'drinks';
 
   function share() {
-    clipboardCopy(`http://localhost:3000/${foodsOurDrinks}/${id}`);
+    clipboardCopy(`http://localhost:3000/${mealsOurDrinks}/${id}`);
     setLinkCopied(true);
   }
 

@@ -1,7 +1,7 @@
 export default function test(recipe, type, id) {
   const recipeInfo = {
     id,
-    type: (type === 'meals') ? 'food' : 'drink',
+    type: (type === 'meals') ? 'meals' : 'drink',
     nationality: recipe.strArea || '',
     category: recipe.strCategory,
     name: '',
