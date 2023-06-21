@@ -28,7 +28,7 @@ function FavoriteRecipes() {
         {
           recipes.map((recipe, index) => (
             <li key={ recipe.id }>
-              <Link to={ `/${recipe.type}s/${recipe.id}` }>
+              <Link to={ `/${recipe.type}/${recipe.id}` }>
                 <div>
                   <img
                     width="150px"

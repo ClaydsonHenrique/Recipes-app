@@ -44,7 +44,6 @@ FavoriteButton.propTypes = {
   recipe: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     type: PropTypes.string.isRequired,
-    // Add other required properties of the recipe object
   }).isRequired,
   index: PropTypes.number,
 };

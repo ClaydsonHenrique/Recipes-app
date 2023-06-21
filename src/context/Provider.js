@@ -9,37 +9,44 @@ export default function Provider({ children }) {
   const [category, setCategory] = useState('');
   const [renderByIngredient, setRenderByIngredient] = useState(false);
   const [ingredientsUrl, setIngredientsUrl] = useState('');
-  const [nationality, setNationality] = useState('All');
   const [favorite, setFavorite] = useState(false);
+  const [recipes, setRecipes] = useState([]);
 
-  const contextValue = useMemo(
-    () => ({
-      appData,
-      setAppData,
-      title,
-      setTitle,
-      renderSearch,
-      setRenderSearch,
-      category,
-      setCategory,
-      renderByIngredient,
-      setRenderByIngredient,
-      ingredientsUrl,
-      setIngredientsUrl,
-      nationality,
-      setNationality,
-      favorite,
-      setFavorite,
-    }),
-    [appData,
-      title,
-      renderSearch,
-      category,
-      renderByIngredient,
-      ingredientsUrl,
-      nationality,
-      favorite],
-  );
+  const contextValue = useMemo(() => ({
+    recipes,
+    setRecipes,
+    appData,
+    setAppData,
+    title,
+    setTitle,
+    renderSearch,
+    setRenderSearch,
+    category,
+    setCategory,
+    renderByIngredient,
+    setRenderByIngredient,
+    ingredientsUrl,
+    setIngredientsUrl,
+    favorite,
+    setFavorite,
+  }), [
+    recipes,
+    setRecipes,
+    appData,
+    setAppData,
+    title,
+    setTitle,
+    renderSearch,
+    setRenderSearch,
+    category,
+    setCategory,
+    renderByIngredient,
+    setRenderByIngredient,
+    ingredientsUrl,
+    setIngredientsUrl,
+    favorite,
+    setFavorite,
+  ]);
 
   return (
     <Context.Provider value={ contextValue }>
