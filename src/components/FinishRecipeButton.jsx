@@ -40,7 +40,6 @@ export default function FinishRecipeButton(prop) {
       recipeInfo.image = recipe.strDrinkThumb;
       recipeInfo.alcoholicOrNot = recipe.strAlcoholic;
     }
-
     return recipeInfo;
   }
 

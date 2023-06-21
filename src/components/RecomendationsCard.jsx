@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import chooseURL from '../helpers/chooseURL';
 import useApi from '../Hooks/useApi';
-import './RecomendationsCard.css';
+import './RecomendetaionsCard.css';
 
 export default function RecomendationsCard({ type }) {
   const { pathname } = useLocation();

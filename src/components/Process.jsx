@@ -119,7 +119,7 @@ export default function Process(prop) {
           recipe={ recipe }
           type={ type[1] }
           id={ id }
-          addToLocalStorage={ addToLocalStorage } // Adiciona a função ao componente
+          addToLocalStorage={ addToLocalStorage }
         />
       </div>
     );
